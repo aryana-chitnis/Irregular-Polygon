@@ -3,80 +3,77 @@ import java.util.ArrayList; // for ArrayList
 
 import gpdraw.*; // for DrawingTool
 
-
 public class IrregularPolygon {
-    private ArrayList<Point2D.Double> myPolygon = new ArrayList<Point2D.Double>();
+    private ArrayList<Point2D.Double> pointsList = new ArrayList<Point2D.Double>();
 
     // constructor
     public IrregularPolygon() {}
 
     // public methods
-    public void add(Point2D.Double aPoint)
-    {
+    public void add(Point2D.Double newVertex) {
         // TODO: Add a point to the IrregularPolygon.
-        myPolygon.add(aPoint);
+        pointsList.add(newVertex);
     }
 
     public double perimeter() {
         // TODO: Calculate the perimeter.
-        if (myPolygon.size() < 2) {
+        if (pointsList.size() < 2) {
             return 0.0;
         }
 
-        double perimeter = 0.0;
-        for (int i = 0; i < myPolygon.size(); i++) {
-            Point2D.Double current = myPolygon.get(i);
-            Point2D.Double next = myPolygon.get((i + 1) % myPolygon.size()); // Wrap around
-            perimeter += current.distance(next);
+        double totalPerimeter = 0.0;
+        int numPoints = pointsList.size();
+
+        for (int i = 0; i < numPoints; i++) {
+            Point2D.Double current = pointsList.get(i);
+            Point2D.Double next = pointsList.get((i + 1) % numPoints); // Wrap around
+            totalPerimeter += current.distance(next);
         }
-        
-        return perimeter;
+
+        return totalPerimeter;
     }
 
     public double area() {
         // TODO: Calculate the area.
-        if (myPolygon.size() < 3) {
+        if (pointsList.size() < 3) {
             return 0.0;
         }
 
-        double sum = 0.0;
-        int n = myPolygon.size();
+        double areaSum = 0.0;
+        int totalVertices = pointsList.size();
 
-        for (int i = 0; i < n; i++) {
-            Point2D.Double current = myPolygon.get(i);
-            Point2D.Double next = myPolygon.get((i + 1) % n); // Wrap around
-            sum += (current.getX() * next.getY()) - (next.getX() * current.getY());
+        for (int i = 0; i < totalVertices; i++) {
+            Point2D.Double first = pointsList.get(i);
+            Point2D.Double second = pointsList.get((i + 1) % totalVertices); // Wrap around
+            areaSum += (first.getX() * second.getY()) - (second.getX() * first.getY());
         }
 
-        return Math.abs(sum) / 2.0;
-
+        return Math.abs(areaSum) / 2.0;
     }
 
-    public void draw()
-    {
+    public void draw() {
         // Wrap the DrawingTool in a try/catch to allow development without need for graphics.
         try {
-            if (myPolygon.size() < 2) {
+            if (pointsList.size() < 2) {
                 return;
             }
 
-            DrawingTool pen = new DrawingTool(new SketchPad(500, 500));
-            pen.up();
-            Point2D.Double first = myPolygon.get(0);
-            pen.move(first.getX(), first.getY());
-            pen.down();
+            // TODO: Draw the polygon.
+            DrawingTool penTool = new DrawingTool(new SketchPad(500, 500));
+            penTool.up();
+            Point2D.Double startPoint = pointsList.get(0);
+            penTool.move(startPoint.getX(), startPoint.getY());
+            penTool.down();
 
-            for (Point2D.Double point : myPolygon) {
-                pen.move(point.getX(), point.getY());
+            for (Point2D.Double vertex : pointsList) {
+                penTool.move(vertex.getX(), vertex.getY());
             }
 
             // Close the polygon
-            pen.move(first.getX(), first.getY());
+            penTool.move(startPoint.getX(), startPoint.getY());
 
-        } catch (java.awt.HeadlessException e) {
+        } catch (java.awt.HeadlessException ex) {
             System.out.println("Exception: No graphics support available.");
         }
     }
-
-    
 }
